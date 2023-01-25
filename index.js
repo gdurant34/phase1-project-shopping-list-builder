@@ -3,9 +3,13 @@
 const url = 'http://localhost:3000/Recipes'
 
 // this fetch puts the recipes in the database in the Saved Recipes section
-fetch(url)
-.then(res => res.json())
-.then(renderSavedRecipes)
+function getSavedRecipes() {
+    fetch(url)
+    .then(res => res.json())
+    .then(renderSavedRecipes)
+}
+
+getSavedRecipes();
 
 function renderSavedRecipes(recipes) {
     recipes.forEach(renderOneRecipeCard)
@@ -60,8 +64,21 @@ const renderOneRecipeCard = recipe => {
     function deleteFunction(e) {
         alert('Click "OK" to delete, or refresh to cancel.') 
         recipeDiv.remove();
+        // console.log(e.target)
+        // console.log(recipe)
         deleteRecipeFromDatabase(recipe.id);
     }
+}
+
+function deleteRecipeFromDatabase(id) {
+    fetch(`${url}/${id}`, {
+        method: 'DELETE',
+    })
+    .then(res => res.json())
+    .then(console.log("Successfully deleted recipe"))
+    .catch((error) => {console.error('Error:', error)})
+
+    location.reload();
 }
 
 function showDetails(recipe) {
@@ -118,7 +135,7 @@ function showDetails(recipe) {
         recipeIngredientsList.append(ingFull)
     }
     // addLineBreaks(recipeInstructions)
-    console.log(recipeInstructions.textContent.length)
+    // console.log(recipeInstructions.textContent.length)
     if (recipeInstructions.textContent.length > 800) {
         oneRecipe.classList.remove('hasInfo')
     shoppingList.classList.remove('hasInfo')
@@ -308,4 +325,6 @@ function postNewRecipe(newRecipe) {
     .then(res => res.json())
     .then(renderOneRecipeCard(newRecipe))
     .catch((error) => {console.error('Error:', error)})
+
+    location.reload();
 }
